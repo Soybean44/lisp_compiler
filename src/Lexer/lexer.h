@@ -20,7 +20,9 @@ constexpr std::array<char, 4> reserved_characters = {'(',')','+', ' '};
 class Lexer {
   public:
 	Lexer(std::string input);
-	Token next();
+	std::tuple<Token, std::size_t> next();
+	Token peak();
+	Token get();
   private:
 	std::string code;
 	std::size_t index = 0;

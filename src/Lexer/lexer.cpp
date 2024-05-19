@@ -1,9 +1,11 @@
 #include "lexer.h"
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <iostream>
 #include <optional>
 #include <string>
+#include <tuple>
 
 Lexer::Lexer(std::string input) {
 	// Remove all newline characters
@@ -11,17 +13,23 @@ Lexer::Lexer(std::string input) {
 	code = input;
 }
 
-Token Lexer::next() {
+std::tuple<Token, std::size_t> Lexer::next() {
+	std::size_t idx = 0;
 	std::optional<Token> token;
 	std::string contents;
 
 	do {
 		// Check if we are at the end of a file, creating an eof token if we are
-		if (index >= code.length()) {
+		if (idx >= code.length()) {
 			token = {.type=T_EOF,.contents="EOF"};
 			break;
-		};
-		char current_char = code[index]; // Get current character
+		}
+		char current_char = code[index+idx]; // Get current character
+
+		if (!current_char) {  // If the character is null assume it is eof (null terminated strings)
+			token = {.type=T_EOF,.contents="EOF"};
+			break;
+		}
 
 		// Check if character is reserved
 		auto it = std::find(reserved_characters.begin(), reserved_characters.end(), current_char);
@@ -32,7 +40,7 @@ Token Lexer::next() {
 				token.value().contents = contents;
 				break;
 			} else {
-				index++;
+				idx++;
 				switch (current_char) {
 				case '(':
 					token = {.type = T_OPENPAREN, .contents="("};
@@ -56,14 +64,23 @@ Token Lexer::next() {
 				token = {.type = T_NUMBER};
 				contents.push_back(current_char);
 			} else {
-				std::cerr << "Invalid Character\n";
+				std::cerr << "Alpha characters not implemented yet\n";
+				std::cout << (int)current_char << "\n";
 				break;
 			}
 		} else { // Started a token but havent ended it so push the current character to contents
 			contents.push_back(current_char);
 		}
-		index++;
+		idx++;
 	} while (true);
-	return token.value();
+	return std::make_tuple(token.value(), idx);
 }
 
+Token Lexer::peak() {
+	return std::get<0>(next());
+}
+Token Lexer::get() {
+	auto tkn = next();
+	index += std::get<1>(tkn);
+	return std::get<0>(tkn);
+}
