@@ -2,11 +2,11 @@
 This project is a compiler for lisp, with the goal being to create a game with the final project
 
 ## Todo
-- [x] Lexer 
-- [ ] Parser outline  
-- [ ] Compiler outline (Rough outline in main.cpp) 
-- [ ] Arithmetic (Just addition)  
-- [ ] Printing 
+- :heavy_check_mark: Lexer 
+- :cross_mark: Parser outline  
+- :white_check_mark: Compiler outline (Rough outline in main.cpp) 
+- :white_check_mark: Arithmetic (Just addition)  
+- :cross_mark: Printing 
 
 
 ## Building 
