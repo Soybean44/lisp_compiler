@@ -3,10 +3,10 @@ This project is a compiler for lisp, with the goal being to create a game with t
 
 ## Todo
 - :heavy_check_mark: Lexer 
-- :cross_mark: Parser outline  
+- :x: Parser outline  
 - :white_check_mark: Compiler outline (Rough outline in main.cpp) 
 - :white_check_mark: Arithmetic (Just addition)  
-- :cross_mark: Printing 
+- :x: Printing 
 
 
 ## Building 
