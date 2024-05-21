@@ -1,10 +1,12 @@
 #include "lexer.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <sstream>
+#include <string>
 
 int main() {
-	Lexer lexer("(+ 12 21)");
+	Lexer lexer("(+ 9 10)");
 	std::stringstream asm_code;
 	asm_code << "format ELF64 executable 3\n";
 	asm_code << "segment readable executable\n";
@@ -17,27 +19,37 @@ int main() {
 			break;
 		case T_CLOSEPAREN:
 			break;
-		case T_NUMBER:
-			break;
-		case T_ADD: {
-			Token num1, num2;
-			if (lexer.peak().type == T_NUMBER) {
-				num1 = lexer.get();
+		case T_ATOM: {
+			if (tok.contents == "+") {
+				Token num1, num2;
+				Token curr_token = lexer.peak();
+				if (curr_token.type == T_ATOM && std::all_of(curr_token.contents.begin(), curr_token.contents.end(), [](char c) { // check if the atom is a number
+				return std::isdigit(c);
+				})) {
+					num1 = lexer.get();
+				} else {
+					std::cerr << "Invalid Argument to addition\n";
+					std::cout << lexer.peak().contents << "\n";
+					return 1;
+				}
+				curr_token = lexer.peak();
+				if (curr_token.type == T_ATOM && std::all_of(curr_token.contents.begin(), curr_token.contents.end(), [](char c) { // check if the atom is a number
+				return std::isdigit(c);
+				})) {
+					num2 = lexer.get();
+				} else {
+					std::cerr << "Invalid Argument to addition\n";
+					std::cout << lexer.peak().contents << "\n";
+					return 1;
+				}
+				asm_code << "    mov rax," << num1.contents << "\n";
+				asm_code << "    mov rdx," << num2.contents << "\n";
+				asm_code << "    add rax,rdx" << "\n";
 			} else {
-				std::cerr << "Invalid Argument to addition\n";
-				std::cout << lexer.peak().contents << "\n";
+				std::cerr << "Invalid Token\n";
+				std::cout << tok.contents << "\n";
 				return 1;
 			}
-			if (lexer.peak().type == T_NUMBER) {
-				num2 = lexer.get();
-			} else {
-				std::cerr << "Invalid Argument to addition\n";
-				std::cout << lexer.peak().contents << "\n";
-				return 1;
-			}
-			asm_code << "    mov rax," << num1.contents << "\n";
-			asm_code << "    mov rdx," << num2.contents << "\n";
-			asm_code << "    add rax,rdx" << "\n";
 		}
 		break;
 		default:

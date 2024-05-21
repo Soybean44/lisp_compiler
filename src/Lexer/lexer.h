@@ -5,8 +5,7 @@
 enum Token_Type {
 	T_OPENPAREN,
 	T_CLOSEPAREN,
-	T_ADD,
-	T_NUMBER,
+	T_ATOM,
 	T_EOF,
 };
 

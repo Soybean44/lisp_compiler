@@ -49,7 +49,7 @@ std::tuple<Token, std::size_t> Lexer::next() {
 					token = {.type = T_CLOSEPAREN, .contents=")"};
 					break;
 				case '+':
-					token = {.type = T_ADD, .contents="+"};
+					token = {.type = T_ATOM, .contents="+"};
 					break;
 				case ' ': // if we are starting on a space, it means nothign so move to the next token
 					continue;
@@ -60,14 +60,8 @@ std::tuple<Token, std::size_t> Lexer::next() {
 			}
 			break;
 		} else if (!token.has_value()) {  // Is this the start of a new token
-			if (std::isdigit(current_char)) {  // Character is a number, then its a number literal
-				token = {.type = T_NUMBER};
-				contents.push_back(current_char);
-			} else {
-				std::cerr << "Alpha characters not implemented yet\n";
-				std::cout << (int)current_char << "\n";
-				break;
-			}
+			token = {.type = T_ATOM};
+			contents.push_back(current_char);
 		} else { // Started a token but havent ended it so push the current character to contents
 			contents.push_back(current_char);
 		}
