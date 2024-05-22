@@ -51,6 +51,9 @@ std::tuple<Token, std::size_t> Lexer::next() {
 				case '+':
 					token = {.type = T_ATOM, .contents="+"};
 					break;
+				case '\"':
+					token = {.type = T_DOUBLEQUOTE, .contents="\""};
+					break;
 				case ' ': // if we are starting on a space, it means nothign so move to the next token
 					continue;
 				default:
