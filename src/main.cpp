@@ -23,13 +23,31 @@ int main() {
 			if (tok.contents == "+") {
 				Token num1, num2;
 				Token curr_token = lexer.peak();
+				// Check if current token is a space and ignore it
+				if (curr_token.type == T_SPACE) {
+					lexer.get();
+				} else {
+					std::cerr << "Invalid Token or Not enough arguments\n";
+					std::cout << curr_token.contents << "\n";
+					return 1;
+				}
+				curr_token = lexer.peak();
 				if (curr_token.type == T_ATOM && std::all_of(curr_token.contents.begin(), curr_token.contents.end(), [](char c) { // check if the atom is a number
 				return std::isdigit(c);
 				})) {
 					num1 = lexer.get();
 				} else {
 					std::cerr << "Invalid Argument to addition\n";
-					std::cout << lexer.peak().contents << "\n";
+					std::cout << curr_token.contents << "\n";
+					return 1;
+				}
+				curr_token = lexer.peak();
+				// Check if current token is a space and ignore it
+				if (curr_token.type == T_SPACE) {
+					lexer.get();
+				} else {
+					std::cerr << "Invalid Token or Not enough arguments\n";
+					std::cout << curr_token.contents << "\n";
 					return 1;
 				}
 				curr_token = lexer.peak();

@@ -1,6 +1,5 @@
 #include "lexer.h"
 #include <algorithm>
-#include <cctype>
 #include <cstddef>
 #include <iostream>
 #include <optional>
@@ -48,14 +47,12 @@ std::tuple<Token, std::size_t> Lexer::next() {
 				case ')':
 					token = {.type = T_CLOSEPAREN, .contents=")"};
 					break;
-				case '+':
-					token = {.type = T_ATOM, .contents="+"};
+				case ' ':
+					token = {.type = T_SPACE, .contents=" "};
 					break;
 				case '\"':
 					token = {.type = T_DOUBLEQUOTE, .contents="\""};
 					break;
-				case ' ': // if we are starting on a space, it means nothign so move to the next token
-					continue;
 				default:
 					std::cerr << "Invalid Character\n";
 					break;

@@ -5,6 +5,7 @@
 enum Token_Type {
 	T_OPENPAREN,
 	T_CLOSEPAREN,
+	T_SPACE,
 	T_ATOM,
 	T_EOF,
 	T_DOUBLEQUOTE
@@ -15,7 +16,7 @@ typedef struct Token {
 	std::string contents;
 } Token;
 
-constexpr std::array<char, 5> reserved_characters = {'(',')','+', ' ', '\"'};
+constexpr std::array<char, 4> reserved_characters = {'(',')',' ', '\"'};
 
 class Lexer {
   public:
