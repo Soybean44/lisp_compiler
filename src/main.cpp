@@ -1,11 +1,21 @@
 #include "lexer.h"
+#include "parser.h"
+
 #include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <sstream>
 #include <string>
-
 int main() {
+	std::cout << "Starting parsing\n";
+	Lexer l("(+ 9 (+ 5 5)) (+ 9 10)");
+	AST_Node ast(AST_ROOT);
+	ast.createAST(&l);
+	ast.printAST();
+	return 0;
+}
+
+int old_main() {
 	Lexer lexer("(+ 9 10)");
 	std::stringstream asm_code;
 	asm_code << "format ELF64 executable 3\n";
