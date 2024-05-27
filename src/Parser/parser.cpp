@@ -33,6 +33,7 @@ void AST_Node::createAST(Lexer* l) {
 			children.push_back(atom);
 		} else if (tok.type == T_SPACE) { // ignore spaces
 			continue;
+    // The following are also BASE CASES, but ends the iteration not the recurrsion
 		} else if (tok.type == T_CLOSEPAREN) { // Stops the current sexpression
 			if (type == AST_ROOT) { // cant close on root
 				std::cerr << "Missing an opening parenthesis\n";
