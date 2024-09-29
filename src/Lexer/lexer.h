@@ -8,7 +8,7 @@ enum Token_Type {
 	T_SPACE,
 	T_ATOM,
 	T_EOF,
-	T_DOUBLEQUOTE
+	T_STRING
 };
 
 typedef struct Token {
@@ -16,7 +16,7 @@ typedef struct Token {
 	std::string contents;
 } Token;
 
-constexpr std::array<char, 4> reserved_characters = {'(',')',' ', '\"'};
+constexpr std::array<char, 4> reserved_characters = {'(',')',' '};
 
 class Lexer {
   public:

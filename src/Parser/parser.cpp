@@ -20,9 +20,9 @@ void AST_Node::createAST(Lexer* l) {
 	}
 	while (true) {
 		Token tok = l->get();
-    // Start a new s-expression and append it to the current node's children
-    // Then recursively call this function
-		if (tok.type == T_OPENPAREN) { 
+		// Start a new s-expression and append it to the current node's children
+		// Then recursively call this function
+		if (tok.type == T_OPENPAREN) {
 			AST_Node* sexp = new AST_Node(AST_SEXP);
 			sexp->setContents("s-expression");
 			sexp->createAST(l);
@@ -33,7 +33,11 @@ void AST_Node::createAST(Lexer* l) {
 			children.push_back(atom);
 		} else if (tok.type == T_SPACE) { // ignore spaces
 			continue;
-    // The following are also BASE CASES, but ends the iteration not the recurrsion
+		} else if (tok.type == T_STRING) {
+			AST_Node* str = new AST_Node(AST_STRING);
+			str->setContents(tok.contents);
+			children.push_back(str);
+			// The following are also BASE CASES, but ends the iteration not the recurrsion
 		} else if (tok.type == T_CLOSEPAREN) { // Stops the current sexpression
 			if (type == AST_ROOT) { // cant close on root
 				std::cerr << "Missing an opening parenthesis\n";
@@ -59,6 +63,9 @@ void AST_Node::printAST() {
 	if (type == AST_ATOM) {
 		std::cout << contents;
 		return; // return early on an atom (BASE CASE)
+	} else if (type == AST_STRING) {
+		std::cout << contents;
+		return; // return early on an string (BASE CASE)
 	}
 	if (type != AST_ROOT) {
 		std::cout << "(";
@@ -67,6 +74,30 @@ void AST_Node::printAST() {
 		child->printAST();
 		if (child != children.back()) { // print if its not the last child
 			std::cout << " ";
+		}
+		if (type == AST_ROOT) {
+			std::cout << "\n";
+		}
+	}
+	if (type != AST_ROOT) {
+		std::cout << ")";
+	}
+}
+void AST_Node::printASTDebug() {
+	if (type == AST_ATOM) {
+		std::cout << "atom";
+		return; // return early on an atom (BASE CASE)
+	} else if (type == AST_STRING) {
+		std::cout << "string";
+		return; // return early on an string (BASE CASE)
+	}
+	if (type != AST_ROOT) {
+		std::cout << "(";
+	}
+	for (AST_Node* child : children) {
+		child->printASTDebug();
+		if (child != children.back()) { // print if its not the last child
+			std::cout << " space ";
 		}
 		if (type == AST_ROOT) {
 			std::cout << "\n";

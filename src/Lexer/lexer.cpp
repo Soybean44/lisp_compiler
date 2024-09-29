@@ -34,10 +34,16 @@ std::tuple<Token, std::size_t> Lexer::next() {
 		auto it = std::find(reserved_characters.begin(), reserved_characters.end(), current_char);
 
 		if (it != reserved_characters.end()) {  // Character is reserved
-			// If we set the value that means its the end of the current token
+			// If we set the value that means its the end of the current token or its a string
 			if (token.has_value()) {
-				token.value().contents = contents;
-				break;
+				if (token->type == T_STRING) {
+					contents.push_back(current_char);
+					idx++;
+					continue;
+				} else {
+					token.value().contents = contents;
+					break;
+				}
 			} else {
 				idx++;
 				switch (current_char) {
@@ -50,9 +56,6 @@ std::tuple<Token, std::size_t> Lexer::next() {
 				case ' ':
 					token = {.type = T_SPACE, .contents=" "};
 					break;
-				case '\"':
-					token = {.type = T_DOUBLEQUOTE, .contents="\""};
-					break;
 				default:
 					std::cerr << "Invalid Character\n";
 					break;
@@ -60,10 +63,20 @@ std::tuple<Token, std::size_t> Lexer::next() {
 			}
 			break;
 		} else if (!token.has_value()) {  // Is this the start of a new token
-			token = {.type = T_ATOM};
-			contents.push_back(current_char);
+			if (current_char == '\"') {
+				token = {.type = T_STRING};
+			} else {
+				token = {.type = T_ATOM};
+				contents.push_back(current_char);
+			}
 		} else { // Started a token but havent ended it so push the current character to contents
-			contents.push_back(current_char);
+			if (current_char == '\"') {
+				token.value().contents = contents;
+				idx++;
+				break;
+			} else {
+				contents.push_back(current_char);
+			}
 		}
 		idx++;
 	} while (true);

@@ -9,6 +9,7 @@ enum AST_Node_Type {
 	AST_ATOM,
 	AST_SEXP,
 	AST_LIST,
+	AST_STRING,
 };
 
 class AST_Node {
@@ -21,6 +22,7 @@ class AST_Node {
 	void setContents(std::string s);
 	void createAST(Lexer* l);
 	void printAST();
+	void printASTDebug();
 
 	~AST_Node();
 };
