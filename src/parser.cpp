@@ -1,7 +1,14 @@
 #include "parser.h"
 #include "lexer.h"
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
+
+bool isNumber(const std::string& str) {
+	return std::all_of(str.begin(), str.end(), [](char c) {
+		return std::isdigit(c);
+	});
+}
 
 AST_Node::AST_Node(AST_Node_Type t) {
 	type = t;
@@ -14,7 +21,7 @@ void AST_Node::setContents(std::string s) {
 void AST_Node::createAST(Lexer* l) {
 	if (type == AST_ROOT) {
 		setContents("Root"); // Debug info
-	} else if (type == AST_ATOM) { // This function shouldnt be run on an atom/leaf
+	} else if (type == AST_IDENTIFIER) { // This function shouldnt be run on an atom/leaf
 		std::cerr << "Cant call createAST on AST_Atom\n";
 		std::exit(EXIT_FAILURE);
 	}
@@ -28,9 +35,13 @@ void AST_Node::createAST(Lexer* l) {
 			sexp->createAST(l);
 			children.push_back(sexp);
 		} else if (tok.type == T_ATOM) { // Append an atom to the current nodes children and stop (BASE CASE)
-			AST_Node* atom = new AST_Node(AST_ATOM);
-			atom->setContents(tok.contents);
-			children.push_back(atom);
+			AST_Node* node;
+			if (isNumber(tok.contents))
+				node = new AST_Node(AST_INT);
+			else
+				node = new AST_Node(AST_IDENTIFIER);
+			node->setContents(tok.contents);
+			children.push_back(node);
 		} else if (tok.type == T_SPACE) { // ignore spaces
 			continue;
 		} else if (tok.type == T_STRING) {
@@ -60,7 +71,7 @@ AST_Node::~AST_Node() { // Destructor, deleting children just calls this so its 
 	}
 }
 void AST_Node::printAST() {
-	if (type == AST_ATOM) {
+	if (type == AST_IDENTIFIER) {
 		std::cout << contents;
 		return; // return early on an atom (BASE CASE)
 	} else if (type == AST_STRING) {
@@ -84,7 +95,7 @@ void AST_Node::printAST() {
 	}
 }
 void AST_Node::printASTDebug() {
-	if (type == AST_ATOM) {
+	if (type == AST_IDENTIFIER) {
 		std::cout << "atom";
 		return; // return early on an atom (BASE CASE)
 	} else if (type == AST_STRING) {

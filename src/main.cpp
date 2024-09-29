@@ -7,7 +7,7 @@
 
 int main() {
 	std::cout << "Starting parsing\n";
-	Lexer l("(println \"Hello\" \"World!\") (println \"Hello world 2!\")");
+	Lexer l("(println \"Hello world!\") (println (+ (+ 8 10) (+ 2 (+ 2 2))))");
 	AST_Node ast(AST_ROOT);
 	ast.createAST(&l);
 	interpretAST(&ast);

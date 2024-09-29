@@ -6,10 +6,11 @@
 
 enum AST_Node_Type {
 	AST_ROOT,
-	AST_ATOM,
+	AST_IDENTIFIER,
 	AST_SEXP,
 	AST_LIST,
 	AST_STRING,
+	AST_INT,
 };
 
 class AST_Node {

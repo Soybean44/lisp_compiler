@@ -1,8 +1,9 @@
 #include "compiler.h"
 #include "parser.h"
 #include <iostream>
+#include <string>
 
-void interpretAST(AST_Node* ast) {
+AST_Node* interpretAST(AST_Node* ast) {
 	// If our node is the root node, just run all the s expressions inside it
 	if (ast->type == AST_ROOT) {
 		for (AST_Node* child : ast->children) {
@@ -19,8 +20,14 @@ void interpretAST(AST_Node* ast) {
 		std::vector<AST_Node*> args(ast->children.begin()+1, ast->children.end());
 		if (function->contents == "println") {
 			for (AST_Node* arg : args) {
-				if (arg->type == AST_STRING) {
-					std::cout << arg->contents;
+				AST_Node* output;
+				if (arg->type == AST_SEXP) {
+					output = interpretAST(arg);
+				} else {
+					output = arg;
+				}
+				if (output->type == AST_STRING || output->type == AST_INT) {
+					std::cout << output->contents;
 					if (args.back() == arg)
 						break;
 				}
@@ -28,5 +35,20 @@ void interpretAST(AST_Node* ast) {
 			}
 			std::cout << "\n";
 		}
+		if (function->contents == "+") {
+			int ans = 0;
+			for (AST_Node* arg : args) {
+				if (arg->type == AST_SEXP) {
+					AST_Node* res = interpretAST(arg);
+					ans += std::stoi(res->contents);
+				} else if (arg->type == AST_INT) {
+					ans += std::stoi(arg->contents);
+				}
+			}
+			AST_Node* ans_node = new AST_Node(AST_INT);
+			ans_node->setContents(std::to_string(ans));
+			return ans_node;
+		}
 	}
+	return ast;
 }

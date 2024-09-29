@@ -1,4 +1,4 @@
 #pragma once
 #include "parser.h"
 
-void interpretAST(AST_Node* ast);
+AST_Node* interpretAST(AST_Node* ast);
