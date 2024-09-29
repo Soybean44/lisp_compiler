@@ -6,16 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE Debug)
 
-# Add the main executable
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_executable(lisp_compiler ${SOURCES})
+# Add the source files
+add_executable(lisp_compiler
+  src/lexer.cpp
+  src/parser.cpp
+  src/compiler.cpp
+  src/main.cpp)
 
 # Include directories for header files
-file(GLOB_RECURSE INCLUDES "src/*.h")
-foreach(_include ${INCLUDES})
-    get_filename_component(_include_dir ${_include} DIRECTORY)
-    list(APPEND INCLUDE_DIRS ${_include_dir})
-endforeach()
-list(REMOVE_DUPLICATES INCLUDE_DIRS)
-include_directories(${INCLUDE_DIRS})
-
+target_include_directories(lisp_compiler PRIVATE include)

@@ -13,11 +13,10 @@ enum AST_Node_Type {
 };
 
 class AST_Node {
-  private:
+  public:
 	AST_Node_Type type;
 	std::string contents;
 	std::vector<AST_Node*> children;
-  public:
 	AST_Node(AST_Node_Type t);
 	void setContents(std::string s);
 	void createAST(Lexer* l);
