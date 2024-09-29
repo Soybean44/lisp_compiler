@@ -70,9 +70,9 @@ std::tuple<Token, std::size_t> Lexer::next() {
 				contents.push_back(current_char);
 			}
 		} else { // Started a token but havent ended it so push the current character to contents
-			if (current_char == '\"') {
+			if (current_char == '\"') { // TODO: allow for '\"' to print a quote in a string
 				token.value().contents = contents;
-				idx++;
+				idx++; // idk why i need this but if i dont the next token is a string
 				break;
 			} else {
 				contents.push_back(current_char);
