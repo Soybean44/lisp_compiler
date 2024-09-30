@@ -3,6 +3,32 @@
 #include <iostream>
 #include <string>
 
+void replace_all( // This function is used in print to replace \n with a newline character
+    std::string& s,
+    std::string const& toReplace,
+    std::string const& replaceWith
+) {
+	std::string buf;
+	std::size_t pos = 0;
+	std::size_t prevPos;
+
+	// Reserves rough estimate of final size of string.
+	buf.reserve(s.size());
+
+	while (true) {
+		prevPos = pos;
+		pos = s.find(toReplace, pos);
+		if (pos == std::string::npos)
+			break;
+		buf.append(s, prevPos, pos - prevPos);
+		buf += replaceWith;
+		pos += toReplace.size();
+	}
+
+	buf.append(s, prevPos, s.size() - prevPos);
+	s.swap(buf);
+}
+
 AST_Node* interpretAST(AST_Node* ast) {
 	// If our node is the root node, just run all the s expressions inside it
 	if (ast->type == AST_ROOT) {
@@ -18,7 +44,7 @@ AST_Node* interpretAST(AST_Node* ast) {
 		}
 		AST_Node* function = ast->children[0];
 		std::vector<AST_Node*> args(ast->children.begin()+1, ast->children.end());
-		if (function->contents == "println") {
+		if (function->contents == "print") {
 			for (AST_Node* arg : args) {
 				AST_Node* output;
 				if (arg->type == AST_SEXP) {
@@ -27,13 +53,14 @@ AST_Node* interpretAST(AST_Node* ast) {
 					output = arg;
 				}
 				if (output->type == AST_STRING || output->type == AST_INT) {
-					std::cout << output->contents;
+					std::string str = output->contents;
+					replace_all(str, "\\n", "\n");
+					std::cout << str;
 					if (args.back() == arg)
 						break;
 				}
 				std::cout << " ";
 			}
-			std::cout << "\n";
 		}
 		if (function->contents == "+") {
 			int ans = 0;
