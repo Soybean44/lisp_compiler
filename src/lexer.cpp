@@ -70,12 +70,22 @@ std::tuple<Token, std::size_t> Lexer::next() {
 				contents.push_back(current_char);
 			}
 		} else { // Started a token but havent ended it so push the current character to contents
-			if (current_char == '\"') { // TODO: allow for '\"' to print a quote in a string
+			if (current_char == '\"') {
 				token.value().contents = contents;
 				idx++; // idk why i need this but if i dont the next token is a string
 				break;
 			} else {
-				contents.push_back(current_char);
+				if (token->type == T_STRING && current_char == '\\') {
+					idx++;
+					current_char = code[index+idx];
+					if (current_char == '\\' || current_char == '\"') {
+						contents.push_back(current_char);
+					} else if (current_char == 'n') {
+						contents.push_back('\n');
+					}
+				} else {
+					contents.push_back(current_char);
+				}
 			}
 		}
 		idx++;
